@@ -19,8 +19,8 @@ program main
 
   !call data_display(data)
 
-do j=1, 32
-  call train(data, 0.001, weight, bias)
+  do j=1, 32
+    call train(data, 0.001, weight, bias)
   enddo
 contains
   subroutine data_display(in_data)
@@ -56,8 +56,8 @@ contains
       grad_weight = 2 * (y_pred - y_real) * x_real
       grad_bias = 2 * (y_pred - y_real) * 2
 
-      new_weight = in_weight - learning_rate * grad_weight
-      new_bias= in_bias - learning_rate * grad_bias
+      in_weight = in_weight - learning_rate * grad_weight
+      in_bias= in_bias - learning_rate * grad_bias
 
       loss = (y_pred - y_real) ** 2
 
