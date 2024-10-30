@@ -17,8 +17,11 @@ program main
       read (*,*) data(1, i), data(2, i)
   enddo
 
-  call data_display(data)
+  !call data_display(data)
+
+do j=1, 32
   call train(data, 0.001, weight, bias)
+  enddo
 contains
   subroutine data_display(in_data)
     real, intent(in) :: in_data(2, 32)
@@ -40,12 +43,27 @@ contains
 
     real, intent(inout) :: in_weight, in_bias
 
-    real :: x, y_pred
+    real :: x, x_real, y_real, y_pred, new_weight, new_bias, grad_weight, grad_bias, loss, loss_sum
+
+    loss_sum = 0
 
     do x = 1,32
-      y_pred = forward(x, in_weight, in_bias)
+      x_real = in_data(1, x)
+      y_real = in_data(2, x)
 
-      ! TODO: calculate gradients & adjust params
+      y_pred = forward(x_real, in_weight, in_bias)
+
+      grad_weight = 2 * (y_pred - y_real) * x_real
+      grad_bias = 2 * (y_pred - y_real) * 2
+
+      new_weight = in_weight - learning_rate * grad_weight
+      new_bias= in_bias - learning_rate * grad_bias
+
+      loss = (y_pred - y_real) ** 2
+
+      loss_sum = loss_sum + loss
     end do
+
+      print*, loss_sum/32
   end
 end program main
