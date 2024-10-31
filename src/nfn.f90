@@ -84,7 +84,7 @@ contains
 
     real, intent(inout) :: weight_in, bias_in
 
-    real :: x_real, y_real, y_pred, new_weight, new_bias, grad_weight, grad_bias, loss, loss_sum
+    real :: x_real, y_real, y_pred, grad_weight, grad_bias, loss, loss_sum
 
     loss_sum = 0
 
@@ -110,7 +110,6 @@ contains
 
       ! calculate loss (for calculating the average at the end of the epoch)
       loss = (y_pred - y_real) ** 2
-
       loss_sum = loss_sum + loss
     end do
 
