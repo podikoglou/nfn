@@ -49,8 +49,6 @@ program nfn_reg_lin
   ! call data_display(data_entries, data)
 
   do i=1, epochs
-    print*, "EPOCH", i
-
     call train(training_data_entries, training_data, learning_rate, weight, bias)
     call test_accuracy(test_data_entries, test_data, weight, bias)
   enddo
@@ -145,7 +143,7 @@ contains
       loss_sum = loss_sum + loss
     end do
 
-    print*, "LOSS", loss_sum / data_size_in
+    write (6, '(F24.18)') loss_sum / data_size_in
   end
 
 end program nfn_reg_lin
