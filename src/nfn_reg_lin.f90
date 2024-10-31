@@ -1,4 +1,4 @@
-program main
+program nfn_reg_lin
   implicit none
 
   ! ---------------------------------- !
@@ -115,4 +115,4 @@ contains
 
     print*, "LOSS", loss_sum / data_size_in
   end
-end program main
+end program nfn_reg_lin
