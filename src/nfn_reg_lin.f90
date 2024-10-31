@@ -6,10 +6,13 @@ program nfn_reg_lin
   ! ---------------------------------- !
 
   ! Amount of epochs to train for
-  integer, parameter :: epochs = 1000000
+  integer, parameter :: epochs = 512
 
   ! Amount of training data entries
-  integer, parameter :: data_entries = 32
+  integer, parameter :: training_data_entries = 32
+
+  ! Amount of test data entries
+  integer, parameter :: test_data_entries = 32
 
   ! Learning rate
   real, parameter :: learning_rate = 0.001
@@ -20,7 +23,11 @@ program nfn_reg_lin
 
   ! Matrix of training data. Contains x values (on the first dimension) 
   ! and expected y values (on the second dimension)
-  real :: data(2, data_entries)
+  real :: training_data(2, training_data_entries)
+
+  ! Matrix of test data. Structured the same as training data.
+  ! This data is not used for training but rather verifying the model's accuracy.
+  real :: test_data(2, test_data_entries)
 
   ! Model Parameters
   real :: weight, bias
@@ -36,12 +43,16 @@ program nfn_reg_lin
 
   bias = 0
 
-  call data_read(data_entries, data)
+  call data_read(training_data_entries, training_data)
+  call data_read(test_data_entries, test_data)
+
   ! call data_display(data_entries, data)
 
   do i=1, epochs
     print*, "EPOCH", i
-    call train(data_entries, data, learning_rate, weight, bias)
+
+    call train(training_data_entries, training_data, learning_rate, weight, bias)
+    call test_accuracy(test_data_entries, test_data, weight, bias)
   enddo
 contains
   ! Utility subroutine to read tab-separated X and Y values from stdin.
@@ -84,9 +95,7 @@ contains
 
     real, intent(inout) :: weight_in, bias_in
 
-    real :: x_real, y_real, y_pred, grad_weight, grad_bias, loss, loss_sum
-
-    loss_sum = 0
+    real :: x_real, y_real, y_pred, grad_weight, grad_bias
 
     do j = 1,data_size_in
       ! get real values from the dataset
@@ -107,6 +116,29 @@ contains
       ! update weights
       weight_in = weight_in - learning_rate * grad_weight
       bias_in = bias_in - learning_rate * grad_bias
+    end do
+  end
+
+  ! Passes test data through the model and calculates (and prints) the loss,
+  ! without adjusting the model's parameters.
+  subroutine test_accuracy(data_size_in, data_in, weight_in, bias_in)
+    integer, intent(in) :: data_size_in
+
+    real, intent(in) :: data_in(2, data_size_in)
+
+    real, intent(inout) :: weight_in, bias_in
+
+    real :: x_real, y_real, y_pred, loss, loss_sum
+
+    loss_sum = 0
+
+    do j = 1,data_size_in
+      ! get real values from the dataset
+      x_real = data_in(1, j)
+      y_real = data_in(2, j)
+
+      ! make prediction (forward pass)
+      y_pred = forward(x_real, weight_in, bias_in)
 
       ! calculate loss (for calculating the average at the end of the epoch)
       loss = (y_pred - y_real) ** 2
@@ -115,4 +147,5 @@ contains
 
     print*, "LOSS", loss_sum / data_size_in
   end
+
 end program nfn_reg_lin

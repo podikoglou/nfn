@@ -6,7 +6,7 @@ program nfn_datagen
   ! ---------------------------------- !
 
   ! Dataset Size, in entries
-  integer, parameter :: size = 300
+  integer, parameter :: size = 64
 
   ! a and c in ax + c
   real, parameter :: a = 31.3829
