@@ -113,6 +113,6 @@ contains
       loss_sum = loss_sum + loss
     end do
 
-    print*, "Avg. Loss:", loss_sum / data_size_in
+    print*, "LOSS", loss_sum / data_size_in
   end
 end program main
