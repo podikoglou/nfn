@@ -96,7 +96,7 @@ contains
       y_pred = forward(x_real, weight_in, bias_in)
 
       grad_weight = 2 * (y_pred - y_real) * x_real
-      grad_bias = 2 * (y_pred - y_real) * 2
+      grad_bias = 2 * (y_pred - y_real)
 
       weight_in = weight_in - learning_rate * grad_weight
       bias_in = bias_in - learning_rate * grad_bias
