@@ -1,69 +1,108 @@
 program main
   implicit none
 
-  ! matrix of training data, containing x values and expected y values
-  real :: data(2, 32)
+  ! ---------------------------------- !
+  ! OPTIONS
+  ! ---------------------------------- !
 
-  ! model parameters
+  ! Amount of epochs to train for
+  integer, parameter :: epochs = 1000000
+
+  ! Amount of training data entries
+  integer, parameter :: data_entries = 32
+
+  ! Learning rate
+  real, parameter :: learning_rate = 0.001
+
+  ! ---------------------------------- !
+  ! ACTUAL VARIABLES
+  ! ---------------------------------- !
+
+  ! Matrix of training data. Contains x values (on the first dimension) 
+  ! and expected y values (on the second dimension)
+  real :: data(2, data_entries)
+
+  ! Model Parameters
   real :: weight, bias
 
-  ! counters
+  ! Counters
   integer :: i, j
+
+  ! ---------------------------------- !
  
-  weight = 0.38
+  ! initialize weight and bias
+  weight = 0.38 ! TODO: actual random value
   bias = 0
 
-  do i=1,32
-      read (*,*) data(1, i), data(2, i)
-  enddo
+  call data_read(data_entries, data)
+  ! call data_display(data_entries, data)
 
-  !call data_display(data)
-
-  do j=1, 32
-    call train(data, 0.001, weight, bias)
+  do j=1, epochs
+    print*, "EPOCH", j
+    call train(data_entries, data, learning_rate, weight, bias)
   enddo
 contains
-  subroutine data_display(in_data)
-    real, intent(in) :: in_data(2, 32)
+  ! Utility subroutine to read tab-separated X and Y values from stdin.
+  subroutine data_read(data_size_in, data_in)
+    integer, intent(in) :: data_size_in
+    real, intent(inout) :: data_in(2, data_size_in)
 
-    do i = 1,32
-      print*, in_data(1, i), in_data(2, i)
+    do i=1,data_size_in
+        read (*,*) data_in(1, i), data_in(2, i)
+    enddo
+  end subroutine data_read
+
+  ! Utility subroutine to display x and y values (tab-separated)
+  ! from a given dataset.
+  subroutine data_display(data_size_in, data_in)
+    integer, intent(in) :: data_size_in
+    real, intent(in) :: data_in(2, data_size_in)
+
+    do i = 1,data_size_in
+      print*, data_in(1, i), data_in(2, i)
     end do
   end subroutine data_display
 
-  real function forward(x, in_weight, in_bias)
-    real, intent(in) :: x, in_weight, in_bias
+  ! Forward pass function. Given an x value, it makes a prediction
+  ! about what the y value would be in the function we're trying
+  ! to predict, using the weight and bias.
+  real function forward(x, weight_in, bias_in)
+    real, intent(in) :: x, weight_in, bias_in
     
-    forward = x * in_weight + in_bias
+    forward = x * weight_in + bias_in
   end function forward
 
-  subroutine train(in_data, learning_rate, in_weight, in_bias)
-    real, intent(in) :: in_data(2, 32)
-    real, intent(in) :: learning_rate
+  ! Adjusts the weight and bias of the model by passing a dataset
+  ! through it and calculating the gradients.
+  subroutine train(data_size_in, data_in, learning_rate_in, weight_in, bias_in)
+    integer, intent(in) :: data_size_in
 
-    real, intent(inout) :: in_weight, in_bias
+    real, intent(in) :: data_in(2, data_size_in)
+    real, intent(in) :: learning_rate_in
+
+    real, intent(inout) :: weight_in, bias_in
 
     real :: x, x_real, y_real, y_pred, new_weight, new_bias, grad_weight, grad_bias, loss, loss_sum
 
     loss_sum = 0
 
-    do x = 1,32
-      x_real = in_data(1, x)
-      y_real = in_data(2, x)
+    do x = 1,data_size_in
+      x_real = data_in(1, x)
+      y_real = data_in(2, x)
 
-      y_pred = forward(x_real, in_weight, in_bias)
+      y_pred = forward(x_real, weight_in, bias_in)
 
       grad_weight = 2 * (y_pred - y_real) * x_real
       grad_bias = 2 * (y_pred - y_real) * 2
 
-      in_weight = in_weight - learning_rate * grad_weight
-      in_bias= in_bias - learning_rate * grad_bias
+      weight_in = weight_in - learning_rate * grad_weight
+      bias_in = bias_in - learning_rate * grad_bias
 
       loss = (y_pred - y_real) ** 2
 
       loss_sum = loss_sum + loss
     end do
 
-      print*, loss_sum/32
+    print*, "Avg. Loss:", loss_sum/x
   end
 end program main
