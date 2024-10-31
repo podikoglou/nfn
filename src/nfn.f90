@@ -93,14 +93,22 @@ contains
       x_real = data_in(1, j)
       y_real = data_in(2, j)
 
+      ! make prediction (forward pass)
       y_pred = forward(x_real, weight_in, bias_in)
 
+      ! calculate gradients (backward pass)
+
+      ! derivative of MSE with respect to weight
       grad_weight = 2 * (y_pred - y_real) * x_real
+
+      ! derivative of MSE with respect to bias
       grad_bias = 2 * (y_pred - y_real)
 
+      ! update weights
       weight_in = weight_in - learning_rate * grad_weight
       bias_in = bias_in - learning_rate * grad_bias
 
+      ! calculate loss (for calculating the average at the end of the epoch)
       loss = (y_pred - y_real) ** 2
 
       loss_sum = loss_sum + loss
