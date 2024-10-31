@@ -30,8 +30,10 @@ program main
 
   ! ---------------------------------- !
  
-  ! initialize weight and bias
-  weight = 0.38 ! TODO: actual random value
+  ! initialize weight (randomly) and bias (non randomly)
+  call RANDOM_INIT(.false., .true.)
+  call RANDOM_NUMBER(weight)
+
   bias = 0
 
   call data_read(data_entries, data)
