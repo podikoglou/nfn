@@ -39,8 +39,8 @@ program main
   call data_read(data_entries, data)
   ! call data_display(data_entries, data)
 
-  do j=1, epochs
-    print*, "EPOCH", j
+  do i=1, epochs
+    print*, "EPOCH", i
     call train(data_entries, data, learning_rate, weight, bias)
   enddo
 contains
@@ -84,13 +84,14 @@ contains
 
     real, intent(inout) :: weight_in, bias_in
 
-    real :: x, x_real, y_real, y_pred, new_weight, new_bias, grad_weight, grad_bias, loss, loss_sum
+    real :: x_real, y_real, y_pred, new_weight, new_bias, grad_weight, grad_bias, loss, loss_sum
 
     loss_sum = 0
 
-    do x = 1,data_size_in
-      x_real = data_in(1, x)
-      y_real = data_in(2, x)
+    do j = 1,data_size_in
+      ! get real values from the dataset
+      x_real = data_in(1, j)
+      y_real = data_in(2, j)
 
       y_pred = forward(x_real, weight_in, bias_in)
 
@@ -105,6 +106,6 @@ contains
       loss_sum = loss_sum + loss
     end do
 
-    print*, "Avg. Loss:", loss_sum/x
+    print*, "Avg. Loss:", loss_sum / data_size_in
   end
 end program main
